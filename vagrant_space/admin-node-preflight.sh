@@ -19,6 +19,10 @@ sudo yum install -y ceph-deploy
 
 sudo yum install -y ntp ntpdate ntp-doc
 
+echo 192.168.88.11 node1 | sudo tee -a /etc/hosts
+echo 192.168.88.12 node2 | sudo tee -a /etc/hosts
+echo 192.168.88.13 node3 | sudo tee -a /etc/hosts
+
 cat << EOM > ~/.ssh/config
 Host node1
    Hostname node1
@@ -53,9 +57,6 @@ DIR=~/my-cluster
 mkdir $DIR
 cd $DIR
 ceph-deploy new node1
-
-# FIXME: depends on public network
-echo "public network = 192.168.1.0/24" >> ceph.conf
 
 ceph-deploy install --release=luminous node1 node2 node3
 
