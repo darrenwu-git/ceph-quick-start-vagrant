@@ -1,0 +1,41 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+system('ssh-add -k ~/.vagrant.d/insecure_private_key')
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos/7"
+
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+  # config.vm.synced_folder "../data", "/vagrant_data"
+  config.vm.network "private_network", type: "dhcp"
+  config.vm.network "public_network", bridge: "eno1"
+  config.ssh.forward_agent = true
+  config.ssh.insert_key = false
+
+  # ceph three nodes
+  (1..3).each do |i|
+    config.vm.define "node#{i}" do |config|
+      config.vm.hostname = "node#{i}"
+      config.vm.provider "virtualbox" do |vb|
+      disk = "../cephdisk#{i}.vdi"
+        unless File.exist?(disk)
+          vb.customize ['createhd', '--filename', disk, '--variant', 'Fixed', '--size', 10 * 1024]
+        end
+        vb.memory = "1024"
+        vb.customize ['storageattach', :id,  '--storagectl', 'IDE', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', disk]
+      end
+      # ceph-deploy will assume remote machines have python2 installed
+      #config.vm.provision :shell, :inline => "DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -yq python", :privileged => true
+    end
+  end
+
+  # ceph admin-node
+  config.vm.define "admin-node" do |admin|
+    admin.vm.hostname = "admin-node"
+    admin.vm.provision "shell", path: "admin-node-preflight.sh", privileged: false
+  end
+
+end
