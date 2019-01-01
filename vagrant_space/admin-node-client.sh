@@ -1,9 +1,9 @@
 #!/bin/sh
 
+cd my-cluster
 ceph-deploy install --release=luminous admin-node
 ceph-deploy install --release=luminous admin-node
 
-cd my-cluster
 ceph-deploy admin admin-node
 
 sudo ceph osd pool create rbd 25
