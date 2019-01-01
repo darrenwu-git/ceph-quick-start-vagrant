@@ -1,4 +1,4 @@
-# Quick Setup ceph in VirtualBox by vagrant
+# Quick Setup ceph cluster in VirtualBox by vagrant
 Installing ceph on VMs for testing environment is the readily way for trial, debugging, development.
 This vagrantfile helps to quick install virtualbox on Ubuntu 18.04 host machine. Install centos 7 guest VMs with ceph nodes.
 It follows [Ceph Installation(ceph-deploy)][ceph-deploy-install] instruction to setup 3 nodes VMs(node1 - node3), and with one admin-node VM for ceph-deploy and ceph-client. Once the admin-node VM be created, the provisioning would auto setup to nodes VMs by [admin-node-preflight.sh][preflight script].
